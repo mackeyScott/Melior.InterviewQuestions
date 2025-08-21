@@ -12,6 +12,7 @@ namespace Melior.InterviewQuestion.UnitTesting
         public Services.Configuration.AppConfigService appConfigService { get; set; }
         public Services.Validator.ValidatorService validator { get; set; }
         public Services.Payment.PaymentService paymentService { get; set; }
+        public Services.Payment.SchemeMapper paymentSchemeMapper { get; set; }
 
         public PaymentService()
         {
@@ -26,9 +27,10 @@ namespace Melior.InterviewQuestion.UnitTesting
                 });
             this.validator = new Services.Validator.ValidatorService();
             this.appConfigService = new Services.Configuration.AppConfigService();
+            this.paymentSchemeMapper = new Services.Payment.SchemeMapper();
             this.accountService = new Services.Account.AccountService(this.appConfigService);
             this.accountService.accountsDataStore = mockAccountStore.Object;
-            this.paymentService = new Services.Payment.PaymentService(this.accountService, this.validator);
+            this.paymentService = new Services.Payment.PaymentService(this.accountService, this.validator, this.paymentSchemeMapper);
         }
 
         public void Dispose(){}

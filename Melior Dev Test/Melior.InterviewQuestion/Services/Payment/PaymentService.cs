@@ -8,10 +8,12 @@ namespace Melior.InterviewQuestion.Services.Payment
     {
         private IAccountService accountService;
         private IValidator validator;
-        public PaymentService(IAccountService accountService, IValidator validator)
+        private ISchemeMapper schemeMapper;
+        public PaymentService(IAccountService accountService, IValidator validator, ISchemeMapper schemeMapper)
         {
             this.accountService = accountService;
             this.validator = validator;
+            this.schemeMapper = schemeMapper;
         }
 
         public MakePaymentResult MakePayment(MakePaymentRequest request)
@@ -32,12 +34,7 @@ namespace Melior.InterviewQuestion.Services.Payment
 
         public bool ProcessPayment(Types.Account account, MakePaymentRequest request)
         {
-            return request.PaymentScheme switch
-            {
-                PaymentScheme.FasterPayments => this.validator.CanMakePayment(account, request.Amount, AllowedPaymentSchemes.FasterPayments),
-                PaymentScheme.Bacs => this.validator.CanMakePayment(account, request.Amount, AllowedPaymentSchemes.Bacs),
-                PaymentScheme.Chaps => this.validator.CanMakePayment(account, request.Amount, AllowedPaymentSchemes.Chaps)
-            };
+            return this.validator.CanMakePayment(account, request.Amount, this.schemeMapper.MapAllowedScheme(request.PaymentScheme));
         }
     }
 }
